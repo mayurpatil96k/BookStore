@@ -1,4 +1,5 @@
 <script>
+import router from '@/router';
 import { login } from '../Services/Login'
 export default {
   data: () => ({
@@ -15,6 +16,7 @@ export default {
       console.log(loginobj)
       login(loginobj)
         .then((data) => localStorage.setItem("API_KEY",data.data.result.accessToken))
+        .then(()=>router.push('/dashboard'))
         .catch((err) => console.log(err))
     }
   }
