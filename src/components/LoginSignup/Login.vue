@@ -1,14 +1,30 @@
 <script>
+import { login } from '../Services/Login'
 export default {
   data: () => ({
-    visible: false
-  })
+    visible: false,
+    email: '',
+    password: ''
+  }),
+  methods: {
+    loginbtn() {
+      let loginobj = {
+        email: this.email,
+        password: this.password
+      }
+      console.log(loginobj)
+      login(loginobj)
+        .then((data) => localStorage.setItem("API_KEY",data.data.result.accessToken))
+        .catch((err) => console.log(err))
+    }
+  }
 }
 </script>
 <template>
   <div>
     <div class="u-title">Email Id</div>
     <v-text-field
+      v-model="email"
       class="u-input"
       density="compact"
       placeholder="Email address"
@@ -19,6 +35,7 @@ export default {
   <div class="u-passdiv">
     <div class="u-title-pass">Password</div>
     <v-text-field
+      v-model="password"
       :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
       :type="visible ? 'text' : 'password'"
       density="compact"
@@ -33,7 +50,9 @@ export default {
   </div>
 
   <div>
-    <v-btn class="u-btn" color="#A03037" size="large" variant="elevated" block> Login </v-btn>
+    <v-btn @click="loginbtn" class="u-btn" color="#A03037" size="large" variant="elevated" block>
+      Login
+    </v-btn>
   </div>
 
   <div class="d-flex justify-center align-center or-container">

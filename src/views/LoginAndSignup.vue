@@ -1,6 +1,8 @@
 <script>
+import { RouterView } from 'vue-router';
 import Login from '../components/LoginSignup/Login.vue'
 import Signup from '../components/LoginSignup/Signup.vue'
+import router from '@/router';
 export default {
   data: () => ({
     visible: false,
@@ -8,10 +10,12 @@ export default {
   }),
   methods: {
     togglecolortrue() {
-      this.ulines = true
+      this.ulines = true;
+      router.push('/login')
     },
     togglecolorfalse() {
       this.ulines = false
+      router.push('/signup')
     }
   },
   components: {
@@ -24,7 +28,7 @@ export default {
 <template>
   <div class="card-container">
     <v-card
-      class="mx-auto d-flex flex-column pa-12 pb-8 u-cardimage"
+      class="mx-auto d-flex flex-column pa-12 pb-8 u-cardimage "
       elevation="8"
       width="624"
       rounded="50px"
@@ -61,10 +65,7 @@ export default {
             <div class="u-line" :class="{ toggletrue: !ulines }"></div>
           </div>
         </div>
-
-        
-        <Login v-if="ulines"/>
-        <Signup v-else/>
+        <RouterView/>
       </div>
     </v-card>
   </div>
@@ -215,5 +216,15 @@ export default {
 .v-input--density-compact .v-field--single-line,
 .v-input--density-compact .v-field--no-label {
   --v-field-padding-bottom: 0px;
+}
+
+@media only screen and (max-width: 600px) {
+  .u-cardimage{
+    display: none !important;
+  }
+  .u-login{
+    width: 100% !important;
+    height: 100% !important;
+  }
 }
 </style>
