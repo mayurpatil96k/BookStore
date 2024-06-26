@@ -1,5 +1,14 @@
+<script>
+import Books from '../components/DashBoard/Books.vue'
+
+export default {
+  components: {
+    Books
+  }
+}
+</script>
 <template>
-  <v-card>
+  <v-card style="z-index: 1;">
     <v-layout>
       <v-app-bar color="#A03037">
         <img class="u-margin pl-xs-5 pl-md-15 pl-sm-10" src="../assets/education.svg" alt="..." />
@@ -30,15 +39,18 @@
       </v-app-bar>
     </v-layout>
   </v-card>
-<!-- router here  -->
-
+  <!-- router here  -->
+  <div class="mt-16 mr-md-11 ml-md-11 ">
+    <Books />
+  </div>
 
   <footer class="d-flex align-center">
     <span class="u-f-text">Copyright © 2024, Bookstore Private Limited. All Rights Reserved</span>
   </footer>
 </template>
 <style>
-.u-f-text{
+
+.u-f-text {
   margin-left: 3vw;
   color: white;
 }
@@ -49,9 +61,9 @@ footer {
   opacity: 1;
 }
 @media only screen and (max-width: 600px) {
-  .u-f-text{
-  margin-left: 0vw;
-}
+  .u-f-text {
+    margin-left: 0vw;
+  }
   .u-i-margin {
     margin-right: 0px !important;
   }
