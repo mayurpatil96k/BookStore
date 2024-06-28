@@ -1,4 +1,5 @@
 <script>
+import { RouterView } from 'vue-router';
 import Books from '../components/DashBoard/Books.vue'
 
 export default {
@@ -41,7 +42,7 @@ export default {
   </v-card>
   <!-- router here  -->
   <div class="mt-16 u-lrmargin ">
-    <Books />
+   <RouterView/>
   </div>
 
   <footer class="d-flex align-center">

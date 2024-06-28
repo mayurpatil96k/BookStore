@@ -16,7 +16,7 @@ export default {
       console.log(loginobj)
       login(loginobj)
         .then((data) => localStorage.setItem("API_KEY",data.data.result.accessToken))
-        .then(()=>router.push('/dashboard'))
+        .then(()=>router.push('/dashboard/books'))
         .catch((err) => console.log(err))
     }
   }

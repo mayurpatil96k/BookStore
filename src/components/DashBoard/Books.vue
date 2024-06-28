@@ -1,7 +1,10 @@
 <script>
+  import {getBooks} from '../../components/Services/Books'
+  import router from '@/router';
 export default {
   data() {
     return {
+      book: null,
       page: 1,
       select: { state: 'Sort by relevance' },
       windowWidth: window.innerWidth,
@@ -20,11 +23,14 @@ export default {
       }
 
       return 9
-    }
+    },sortedItems() {
+      return this.book.sort((a, b) => a.discountPrice - b.discountPrice);
+    },
   },
   mounted() {
     window.addEventListener('resize', this.handleResize)
-    this.handleResize()
+    this.handleResize();
+    this.getbooks();
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.handleResize)
@@ -32,6 +38,12 @@ export default {
   methods: {
     handleResize() {
       this.windowWidth = window.innerWidth
+    },
+    getbooks(){
+      getBooks().then((data)=>this.book=data.data.result).catch((err)=>console.log(err));
+    },
+    bookdetailpage(id){
+      router.push({ name: 'bookdetail', params: { id } }) 
     }
   }
 }
@@ -67,21 +79,21 @@ export default {
       sm="6"
       md="3"
       lg="3"
-      v-for="item in 12"
+      v-for="item in book"
     >
-      <v-sheet class="book-card pa-2 ma-2 align-center">
-        <div class="u-book">
+      <v-sheet class="pa-2 ma-2 align-center">
+        <div class="u-book book-card" @click="bookdetailpage(item._id)">
           <div class="d-flex align-center justify-center u-c-img position-relative">
             <!-- img div -->
             <img height="135" width="110" src="../../assets/Image 11@2x.png" alt="" />
-            <div class="u-box position-absolute d-flex align-center justify-center">
-              <span><Strong>OUT OF STOCK</Strong></span>
+            <div v-if="item.quantity==0" class="u-box-out position-absolute d-flex align-center justify-center">
+              <span ><Strong>OUT OF STOCK</Strong></span>
             </div>
           </div>
           <div class="d-flex flex-column pl-5">
             <!-- info div -->
-            <span class="pt-1"><strong>Don't Make Me Think</strong></span>
-            <span class="u-smalltext">by Steve Krug</span>
+            <span class="pt-1 d-inline-block text-truncate"><strong>{{ item.bookName }}</strong></span>
+            <span class="u-smalltext">{{'by ' + item.author}}</span>
             <div class="d-flex align-center">
               <div class="u-rating d-flex justify-center align-center">
                 <span class="u-c-rating">4.5</span
@@ -90,8 +102,8 @@ export default {
               <span class="u-smalltext pt-1 pl-1">(20)</span>
             </div>
             <div class="d-flex align-center">
-              <span><Strong>Rs. 1500</Strong></span>
-              <span class="u-smalltext pl-1"><strike>Rs. 2000</strike></span>
+              <span><Strong>{{"Rs."+ item.discountPrice}}</Strong></span>
+              <span class="u-smalltext pl-1"><strike>{{"Rs."+ item.price}}</strike></span>
             </div>
           </div>
         </div>
@@ -107,12 +119,11 @@ export default {
 .book-card:hover {
   box-shadow: 0px 0px 2px 2px #bfb5b5;
 }
-.u-box {
+.u-box-out {
   box-shadow: 0px 3px 6px #00000029;
   border-radius: 2px;
   opacity: 0.96;
   bottom: 5px;
-  left: 0px;
   background: white;
   width: 178px;
   height: 37px;

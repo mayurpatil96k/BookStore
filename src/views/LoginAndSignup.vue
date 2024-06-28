@@ -38,7 +38,7 @@ export default {
         src="../assets/logincart.png"
         alt="Loading..."
       />
-      <span class="u-box"><strong>ONLINE BOOK SHOPPING</strong></span>
+      <span class="u-box-n"><strong>ONLINE BOOK SHOPPING</strong></span>
     </v-card>
 
     <v-card class="mx-auto pa-12 pb-8 u-login" elevation="8" width="389" rounded="5px">
@@ -200,7 +200,7 @@ export default {
   opacity: 1;
 }
 
-.u-box {
+.u-box-n {
   margin-top: 31px;
   margin-left: 30px;
   width: 209px;
