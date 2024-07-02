@@ -10,7 +10,11 @@ export default {
   },
   data() {
     return {
-      searchtext: ''
+      searchtext: '',
+      user: {
+        fullName: 'John Doe',
+        email: 'john.doe@doe.com',
+      },
     }
   },
   updated(){
@@ -23,6 +27,9 @@ console.log('updated')
   methods: {
     changesearch() {
       this.counterStore.setSearchText(this.searchtext);
+    },
+    logoutFun(){
+      localStorage.clear();
     }
   }
 }
@@ -48,10 +55,33 @@ console.log('updated')
           ></v-text-field>
         </div>
         <v-spacer></v-spacer>
-        <div class="border-s-sm h-100 d-flex flex-column justify-center align-center">
-          <v-icon class="pl-10 pr-10" icon="mdi-account-outline"></v-icon>
+        <v-menu min-width="200px" rounded>
+    <template v-slot:activator="{ props }">
+      <!-- profile div -->
+      <div v-bind="props" class="border-s-sm h-100 d-flex flex-column justify-center align-center">
+          
+          <v-icon  class="pl-10 pr-10" icon="mdi-account-outline"></v-icon>
           <span class="text-caption u-dnone">Profile</span>
+      
         </div>
+    </template>
+    <v-card>
+      <v-card-text>
+        <div class="mx-auto text-center">
+          <v-avatar color="brown">
+            <span class="text-h5"></span>
+          </v-avatar>
+          <h3>{{ user.fullName }}</h3>
+          <p class="text-caption mt-1">{{ user.email }}</p>
+          <v-divider class="my-3"></v-divider>
+          <v-btn variant="text" rounded> Edit Account </v-btn>
+          <v-divider class="my-3"></v-divider>
+          <v-btn variant="text" @click="logoutFun" rounded> Logout </v-btn>
+        </div>
+      </v-card-text>
+    </v-card>
+  </v-menu>
+        
         <div class="mr-10 u-i-margin border-s-sm border-e-sm h-100 d-flex flex-column justify-center align-center">
           <v-icon class="pl-10 pr-10" icon="mdi-cart-outline"></v-icon>
           <span class="text-caption u-dnone">Cart</span>
@@ -71,6 +101,9 @@ console.log('updated')
 
 
 <style>
+.w-25 {
+    width: 35% !important;
+}
 .u-i-margin {
   margin-right: 237px !important;
 }

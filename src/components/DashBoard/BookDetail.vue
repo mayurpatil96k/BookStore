@@ -1,17 +1,44 @@
 <script>
-import {getBooks} from '../../components/Services/Books'
+import { getBooks, getFeedback, setFeedback } from '../../components/Services/Books'
 export default {
-  data: () => ({ rating: '', book: null }),
-  created(){
-    this.getbooks();
+  data: () => ({ desc: '', rating: '', book: null, feedback: null }),
+  created() {
+    this.getbooks()
+    this.getFeedbacks()
   },
   methods: {
-    cheackid(elem){
-return elem._id==this.$route.params.id;
+    cheackid(elem) {
+      return elem._id == this.$route.params.id
     },
     getbooks() {
       getBooks()
-        .then((data) => {this.book = data.data.result.filter(this.cheackid);console.log(this.book)})
+        .then((data) => {
+          this.book = data.data.result.filter(this.cheackid)
+          console.log(this.book)
+        })
+        .catch((err) => console.log(err))
+    },
+    getFeedbacks() {
+      getFeedback(this.$route.params.id)
+        .then((data) => {
+          this.feedback = data.data.result
+          console.log(this.feedback)
+        })
+        .catch((err) => console.log(err))
+    },
+    givefeedback() {
+      if(this.desc == '' || this.rating == '' || this.desc.length < 2) return
+      const feedbackobj = {
+        comment: this.desc,
+        rating: this.rating
+      }
+      this.desc = ''
+      this.rating = ''
+      setFeedback(this.$route.params.id, feedbackobj)
+        .then((data) => {
+          console.log(data)
+          this.getFeedbacks()
+        })
         .catch((err) => console.log(err))
     }
   }
@@ -36,7 +63,10 @@ return elem._id==this.$route.params.id;
           <div class="d-flex align-center justify-center u-c-img-b position-relative">
             <!-- img div -->
             <img height="367" width="282" src="../../assets/Image 11@2x.png" alt="" />
-            <div v-if="item.quantity==0" class="u-box-out-b position-absolute d-flex align-center justify-center">
+            <div
+              v-if="item.quantity == 0"
+              class="u-box-out-b position-absolute d-flex align-center justify-center"
+            >
               <span><Strong>OUT OF STOCK</Strong></span>
             </div>
           </div>
@@ -54,11 +84,13 @@ return elem._id==this.$route.params.id;
         </div>
       </div>
     </div>
-    <div class="pl-md-10 pl-sm-5 pl-xs-5">
+    <div style="width: 100% !important" class="pl-md-10 pl-sm-5 pl-xs-5">
       <div class="d-flex flex-column">
         <!-- info div -->
-        <span style="font-size: 1.5em"><strong>{{ item.bookName }}</strong></span>
-        <span class="u-smalltext-b">{{"by "+item.author}}</span>
+        <span style="font-size: 1.5em"
+          ><strong>{{ item.bookName }}</strong></span
+        >
+        <span class="u-smalltext-b">{{ 'by ' + item.author }}</span>
         <div class="d-flex align-center">
           <div class="u-rating-b d-flex justify-center align-center">
             <span class="u-c-rating-b">4.5</span
@@ -67,8 +99,12 @@ return elem._id==this.$route.params.id;
           <span class="u-smalltext-b pt-3 pl-3">(20)</span>
         </div>
         <div class="d-flex align-center mb-4">
-          <span style="font-size: 1.5em"><Strong>{{"Rs. "+item.discountPrice}}</Strong></span>
-          <span class="u-smalltext-b pl-3"><strike>{{"Rs. "+item.price}}</strike></span>
+          <span style="font-size: 1.5em"
+            ><Strong>{{ 'Rs. ' + item.discountPrice }}</Strong></span
+          >
+          <span class="u-smalltext-b pl-3"
+            ><strike>{{ 'Rs. ' + item.price }}</strike></span
+          >
         </div>
       </div>
       <v-divider></v-divider>
@@ -78,66 +114,60 @@ return elem._id==this.$route.params.id;
             &#8226;Book Detail
           </ul></span
         >
-        <span class="u-sm-b pl-2 pb-10 text-justify"
-          >{{ item.description }}</span
-        >
+        <span class="u-sm-b pl-2 pb-10 text-justify">{{ item.description }}</span>
       </div>
       <v-divider></v-divider>
       <div class="mt-3">
         <span class="text-h6 mb-3">Customer Feedback</span>
         <div class="mt-3">
-          <v-card class="mx-auto d-flex flex-column" max-width="605" color="#F5F5F5">
+          <v-card class="mx-auto d-flex flex-column" width="100%" color="#F5F5F5">
             <v-card-item>
               <v-card-subtitle opacity="1" class="pl-2"> Overall Rating </v-card-subtitle>
-              <v-rating color="#FFCE00" v-model="rating" density="comfortable"></v-rating>
+              <v-rating
+                half-increments
+                active-color="#FFCE00"
+                v-model="rating"
+                density="comfortable"
+              ></v-rating>
             </v-card-item>
-            <v-textarea
-              max-width="560"
-              class="pl-md-6 pr-sm-3"
-              rows="3"
-              density="compact"
-              auto-grow
-              placeholder="Write your review"
-              variant="solo"
-            ></v-textarea>
-            <v-btn color="#3371B5" class="align-self-end mr-5 mb-5">Submit</v-btn>
+            <div class="pl-md-6 pr-sm-3 d-flex align-center justify-center">
+              <v-textarea
+                v-model="desc"
+                style="background-color: white"
+                max-width="560"
+                class=""
+                auto-grow
+                rows="2"
+                density="compact"
+                variant="flat"
+                placeholder="Write your review"
+              ></v-textarea>
+            </div>
+            <v-btn color="#3371B5" @click="givefeedback" class="align-self-end mr-5 mb-5 mt-2"
+              >Submit</v-btn
+            >
           </v-card>
         </div>
       </div>
-      <div class="d-flex mt-8">
+      <div class="d-flex mt-8" v-for="feed in feedback">
         <div>
           <v-avatar color="#F5F5F5" class="border-sm">
             <span style="color: #707070" class="text-h6">MP</span>
           </v-avatar>
         </div>
         <div class="ml-3 mt-2">
-          <span><strong>Mayur Patil</strong></span>
-          <div>
-            <v-rating disabled color="#FFCE00" v-model="rating" density="compact"></v-rating>
-          </div>
-          <span style="color: #707070" class="text-body-2 text-justify"
-            >Good product. Even though the translation could have been better, Chanakya's neeti are
-            thought provoking. Chanakya has written on many different topics and his writings are
-            succinct.</span
+          <span
+            ><strong>{{ feed.user_id.fullName }}</strong></span
           >
-        </div>
-      </div>
-      <div class="d-flex mt-8 mb-5">
-        <div>
-          <v-avatar color="#F5F5F5" class="border-sm">
-            <span style="color: #707070" class="text-h6">MP</span>
-          </v-avatar>
-        </div>
-        <div class="ml-3 mt-2">
-          <span><strong>Mayur Patil</strong></span>
           <div>
-            <v-rating disabled color="#FFCE00" density="compact"></v-rating>
+            <v-rating
+              disabled
+              :model-value="feed.rating"
+              active-color="#FFCE00"
+              density="compact"
+            ></v-rating>
           </div>
-          <span style="color: #707070" class="text-body-2 text-justify"
-            >Good product. Even though the translation could have been better, Chanakya's neeti are
-            thought provoking. Chanakya has written on many different topics and his writings are
-            succinct.</span
-          >
+          <span style="color: #707070" class="text-body-2 text-justify">{{ feed.comment }}</span>
         </div>
       </div>
     </div>
