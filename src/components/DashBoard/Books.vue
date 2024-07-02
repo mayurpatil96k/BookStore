@@ -1,12 +1,16 @@
 <script>
-  import {getBooks} from '../../components/Services/Books'
-  import router from '@/router';
+import { computed, watch,ref } from 'vue';
+import { getBooks } from '../../components/Services/Books'
+import router from '@/router'
+import { useCounterStore } from '@/stores/counter'
 export default {
   data() {
     return {
-      book: null,
+      search:'',
+      book: [],
       page: 1,
-      select: { state: 'Sort by relevance' },
+      itemsPerPage: 12,
+      select: 'Sort by relevance',
       windowWidth: window.innerWidth,
       items: [
         { state: 'Sort by relevance' },
@@ -16,34 +20,59 @@ export default {
       ]
     }
   },
+  updated(){
+console.log('updated')
+  },
+  
   computed: {
     totalVisible() {
-      if (this.windowWidth <= 600) {
-        return 3
-      }
-
-      return 9
-    },sortedItems() {
-      return this.book.sort((a, b) => a.discountPrice - b.discountPrice);
+      return this.windowWidth <= 600 ? 3 : 9;
     },
+    totalPages() {
+      return Math.ceil(this.book.length / this.itemsPerPage);
+    },
+    sortedBooks() {
+      const start = (this.page - 1) * this.itemsPerPage;
+      const end = this.page * this.itemsPerPage;
+      return this.book.slice().sort((a, b) => {
+        switch (this.select) {
+          case 'Price:Low to High':
+            return a.discountPrice - b.discountPrice;
+          case 'Price:High to Low':
+            return b.discountPrice - a.discountPrice;
+          case 'Newest Arrival':
+            return new Date(b.arrivalDate) - new Date(a.arrivalDate);
+          default:
+            return 0;
+        }
+      }).slice(start, end);
+    }
+  },
+  created(){
+    this.counterStore = useCounterStore();
   },
   mounted() {
-    window.addEventListener('resize', this.handleResize)
+    console.log(this.counterStore.searchtext)
+    window.addEventListener('resize', this.handleResize);
     this.handleResize();
-    this.getbooks();
+    this.getBooks();
   },
   beforeDestroy() {
-    window.removeEventListener('resize', this.handleResize)
+    window.removeEventListener('resize', this.handleResize);
   },
   methods: {
     handleResize() {
-      this.windowWidth = window.innerWidth
+      this.windowWidth = window.innerWidth;
     },
-    getbooks(){
-      getBooks().then((data)=>this.book=data.data.result).catch((err)=>console.log(err));
+    getBooks() {
+      getBooks()
+        .then((data) => {
+          this.book = data.data.result;
+        })
+        .catch((err) => console.log(err));
     },
-    bookdetailpage(id){
-      router.push({ name: 'bookdetail', params: { id } }) 
+    bookdetailpage(id) {
+      router.push({ name: 'bookdetail', params: { id } });
     }
   }
 }
@@ -55,15 +84,16 @@ export default {
       <span class="pl-md-2 pr-md-2 text-h5">Books &nbsp</span>
       <span class="text-caption u-dnone">(128 Items)</span>
     </div>
-    <v-spacer> </v-spacer>
+    <v-spacer></v-spacer>
     <div class="pl-md-2 pr-md-2 d-flex align-center">
       <v-select
+        @change="sortedBooks"
         class="mt-5"
         max-width="300"
         v-model="select"
         :items="items"
         item-title="state"
-        item-value="abbr"
+        item-value="state"
         label="Select"
         single-line
         variant="outlined"
@@ -72,38 +102,40 @@ export default {
     </div>
   </div>
 
-  <v-row class="align-center justify-center" no-gutters>
+  <v-row class="" no-gutters>
     <v-col
       class="d-flex align-center justify-center"
       cols="12"
       sm="6"
       md="3"
       lg="3"
-      v-for="item in book"
+      v-for="item in sortedBooks"
+      :key="item._id"
     >
       <v-sheet class="pa-2 ma-2 align-center">
         <div class="u-book book-card" @click="bookdetailpage(item._id)">
           <div class="d-flex align-center justify-center u-c-img position-relative">
-            <!-- img div -->
             <img height="135" width="110" src="../../assets/Image 11@2x.png" alt="" />
-            <div v-if="item.quantity==0" class="u-box-out position-absolute d-flex align-center justify-center">
-              <span ><Strong>OUT OF STOCK</Strong></span>
+            <div
+              v-if="item.quantity == 0"
+              class="u-box-out position-absolute d-flex align-center justify-center"
+            >
+              <span><strong>OUT OF STOCK</strong></span>
             </div>
           </div>
           <div class="d-flex flex-column pl-5">
-            <!-- info div -->
             <span class="pt-1 d-inline-block text-truncate"><strong>{{ item.bookName }}</strong></span>
-            <span class="u-smalltext">{{'by ' + item.author}}</span>
+            <span class="u-smalltext">{{ 'by ' + item.author }}</span>
             <div class="d-flex align-center">
               <div class="u-rating d-flex justify-center align-center">
-                <span class="u-c-rating">4.5</span
-                ><v-icon class="u-c-rating" icon="mdi-star"></v-icon>
+                <span class="u-c-rating">4.5</span>
+                <v-icon class="u-c-rating" icon="mdi-star"></v-icon>
               </div>
               <span class="u-smalltext pt-1 pl-1">(20)</span>
             </div>
             <div class="d-flex align-center">
-              <span><Strong>{{"Rs."+ item.discountPrice}}</Strong></span>
-              <span class="u-smalltext pl-1"><strike>{{"Rs."+ item.price}}</strike></span>
+              <span><strong>{{ 'Rs.' + item.discountPrice }}</strong></span>
+              <span class="u-smalltext pl-1"><strike>{{ 'Rs.' + item.price }}</strike></span>
             </div>
           </div>
         </div>
@@ -111,7 +143,7 @@ export default {
     </v-col>
   </v-row>
   <div class="text-center mt-8 mb-8">
-    <v-pagination v-model="page" :length="18" :total-visible="totalVisible"></v-pagination>
+    <v-pagination v-model="page" :length="totalPages" :total-visible="totalVisible"></v-pagination>
   </div>
 </template>
 

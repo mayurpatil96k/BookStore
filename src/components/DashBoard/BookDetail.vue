@@ -1,15 +1,26 @@
 <script>
+import {getBooks} from '../../components/Services/Books'
 export default {
-  data: () => ({ rating: '' }),
-  mounted(){
-    console.log(this.$route.params.id)
+  data: () => ({ rating: '', book: null }),
+  created(){
+    this.getbooks();
+  },
+  methods: {
+    cheackid(elem){
+return elem._id==this.$route.params.id;
+    },
+    getbooks() {
+      getBooks()
+        .then((data) => {this.book = data.data.result.filter(this.cheackid);console.log(this.book)})
+        .catch((err) => console.log(err))
+    }
   }
 }
 </script>
 
 <template>
   <v-breadcrumbs :items="['Home', 'Book(04)']"></v-breadcrumbs>
-  <div class="d-flex u-flex-book">
+  <div class="d-flex u-flex-book" v-for="item in book">
     <div class="d-flex ml-md-5">
       <div>
         <div class="u-smbox d-flex align-center justify-center">
@@ -25,22 +36,29 @@ export default {
           <div class="d-flex align-center justify-center u-c-img-b position-relative">
             <!-- img div -->
             <img height="367" width="282" src="../../assets/Image 11@2x.png" alt="" />
-            <div class="u-box-out-b position-absolute d-flex align-center justify-center">
+            <div v-if="item.quantity==0" class="u-box-out-b position-absolute d-flex align-center justify-center">
               <span><Strong>OUT OF STOCK</Strong></span>
             </div>
           </div>
         </div>
-        <div class="mt-5 d-flex justify-space-between align-center w-100 ">
+        <div class="mt-5 d-flex justify-space-between align-center w-100">
           <v-btn class="w-50" max-height="40" max-width="170" color="#A03037">Add to Bag</v-btn>
-          <v-btn class="w-50" max-height="40" max-width="170" color="#333333" prepend-icon="mdi-heart">WishList</v-btn>
+          <v-btn
+            class="w-50"
+            max-height="40"
+            max-width="170"
+            color="#333333"
+            prepend-icon="mdi-heart"
+            >WishList</v-btn
+          >
         </div>
       </div>
     </div>
     <div class="pl-md-10 pl-sm-5 pl-xs-5">
       <div class="d-flex flex-column">
         <!-- info div -->
-        <span style="font-size: 1.5em"><strong>Don't Make Me Think</strong></span>
-        <span class="u-smalltext-b">by Mayur Patil</span>
+        <span style="font-size: 1.5em"><strong>{{ item.bookName }}</strong></span>
+        <span class="u-smalltext-b">{{"by "+item.author}}</span>
         <div class="d-flex align-center">
           <div class="u-rating-b d-flex justify-center align-center">
             <span class="u-c-rating-b">4.5</span
@@ -49,8 +67,8 @@ export default {
           <span class="u-smalltext-b pt-3 pl-3">(20)</span>
         </div>
         <div class="d-flex align-center mb-4">
-          <span style="font-size: 1.5em"><Strong>Rs. 15000000</Strong></span>
-          <span class="u-smalltext-b pl-3"><strike>Rs. 20000000</strike></span>
+          <span style="font-size: 1.5em"><Strong>{{"Rs. "+item.discountPrice}}</Strong></span>
+          <span class="u-smalltext-b pl-3"><strike>{{"Rs. "+item.price}}</strike></span>
         </div>
       </div>
       <v-divider></v-divider>
@@ -61,11 +79,7 @@ export default {
           </ul></span
         >
         <span class="u-sm-b pl-2 pb-10 text-justify"
-          >Lorem ipsum dolor sit, amet consectetur adipisicing elit. Unde, tenetur ipsum excepturi
-          vitae totam fuga consequuntur suscipit non reiciendis architecto nemo beatae magni sequi
-          quia temporibus, quibusdam natus laboriosam praesentium inventore esse possimus, aliquid
-          soluta a delectus! Dolorem, dignissimos aperiam velit, illum corrupti, delectus sed autem
-          totam magni quis aliquid?</span
+          >{{ item.description }}</span
         >
       </div>
       <v-divider></v-divider>
@@ -92,39 +106,39 @@ export default {
       </div>
       <div class="d-flex mt-8">
         <div>
-        <v-avatar color="#F5F5F5" class="border-sm">
-          <span style="color: #707070;" class="text-h6">MP</span>
-        </v-avatar>
-    </div>
-    <div class="ml-3 mt-2">
-        <span ><strong>Mayur Patil</strong></span>
-        <div>
-          <v-rating disabled color="#FFCE00" v-model="rating" density="compact"></v-rating>
+          <v-avatar color="#F5F5F5" class="border-sm">
+            <span style="color: #707070" class="text-h6">MP</span>
+          </v-avatar>
         </div>
-        <span style="color: #707070;" class="text-body-2 text-justify"
-          >Good product. Even though the translation could have been better, Chanakya's neeti are
-          thought provoking. Chanakya has written on many different topics and his writings are
-          succinct.</span
-        >
-    </div>
+        <div class="ml-3 mt-2">
+          <span><strong>Mayur Patil</strong></span>
+          <div>
+            <v-rating disabled color="#FFCE00" v-model="rating" density="compact"></v-rating>
+          </div>
+          <span style="color: #707070" class="text-body-2 text-justify"
+            >Good product. Even though the translation could have been better, Chanakya's neeti are
+            thought provoking. Chanakya has written on many different topics and his writings are
+            succinct.</span
+          >
+        </div>
       </div>
       <div class="d-flex mt-8 mb-5">
         <div>
-        <v-avatar color="#F5F5F5"  class="border-sm">
-          <span style="color: #707070;" class="text-h6">MP</span>
-        </v-avatar>
-    </div>
-    <div class="ml-3 mt-2">
-        <span ><strong>Mayur Patil</strong></span>
-        <div>
-          <v-rating disabled color="#FFCE00" density="compact"></v-rating>
+          <v-avatar color="#F5F5F5" class="border-sm">
+            <span style="color: #707070" class="text-h6">MP</span>
+          </v-avatar>
         </div>
-        <span style="color: #707070;" class="text-body-2 text-justify"
-          >Good product. Even though the translation could have been better, Chanakya's neeti are
-          thought provoking. Chanakya has written on many different topics and his writings are
-          succinct.</span
-        >
-    </div>
+        <div class="ml-3 mt-2">
+          <span><strong>Mayur Patil</strong></span>
+          <div>
+            <v-rating disabled color="#FFCE00" density="compact"></v-rating>
+          </div>
+          <span style="color: #707070" class="text-body-2 text-justify"
+            >Good product. Even though the translation could have been better, Chanakya's neeti are
+            thought provoking. Chanakya has written on many different topics and his writings are
+            succinct.</span
+          >
+        </div>
       </div>
     </div>
   </div>
@@ -177,9 +191,9 @@ export default {
   width: 361px !important;
   height: 413px !important;
 }
-@media only screen and (max-width: 600px){
-.u-flex-book{
-  flex-direction: column;
-}
+@media only screen and (max-width: 600px) {
+  .u-flex-book {
+    flex-direction: column;
+  }
 }
 </style>

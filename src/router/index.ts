@@ -4,7 +4,6 @@ import Login from '../components/LoginSignup/Login.vue'
 import Signup from '../components/LoginSignup/Signup.vue'
 import DashBoard from '../views/DashBoard.vue'
 import BookDetail from '@/components/DashBoard/BookDetail.vue'
-import Books from '@/components/DashBoard/Books.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
