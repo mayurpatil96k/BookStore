@@ -22,11 +22,15 @@ export default {
   updated(){
 console.log('updated')
   },
+  computed: {
+    cartcountfun() {
+    return this.cartStore.cartitemscount;
+  }
+},
   mounted(){
     this.cartStore = useCartStore();
     this.cartStore.setCartItemsCount().then(() => {
       this.cartcount = this.cartStore.cartitemscount;
-      console.log(this.cartcount);
     });
   },
   created() {
@@ -94,7 +98,7 @@ console.log('updated')
         <div class="mr-10 u-i-margin border-s-sm border-e-sm h-100 d-flex flex-column justify-center align-center ">
           <div class="pl-7 pr-7">
             
-          <v-badge size=small :content="cartcount" color="white" class="small-badge">
+          <v-badge size=small :content="cartcountfun" color="white" class="small-badge">
           <v-icon  icon="mdi-cart-outline"></v-icon>
         </v-badge>
       </div>

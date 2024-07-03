@@ -1,27 +1,29 @@
 <script setup lang="ts">
-import { ref,onMounted } from 'vue';
+import { ref,onMounted,computed } from 'vue';
 import {getCartItems} from '../../components/Services/Cart'
 import { useCartStore } from '@/stores/counter'
 const CartStore = useCartStore();
-const cartCount = ref(CartStore.cartbookcount);
+const cartCount = computed(() => CartStore.cartbookcount);
 onMounted(() => {
   getCartItems().then((data)=>console.log()).catch((err)=>console.log(err))
 });
 
 
 const addToCart = () => {
-  cartCount.value++;
+  CartStore.addtocart();
 };
 
 const incrementCount = () => {
-  cartCount.value++;
+  CartStore.increment();
+  
 };
 
 const decrementCount = () => {
   if (cartCount.value > 0) {
-    cartCount.value--;
+    CartStore.decrement();
+  };
   }
-};
+   
 </script>
 
 <template>

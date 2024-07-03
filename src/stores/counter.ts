@@ -1,6 +1,11 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { getCartItems } from '../components/Services/Cart'
+import {
+  getCartItems,
+  addCartItems,
+  removeCartItems,
+  cartitemQuantity
+} from '../components/Services/Cart'
 
 const fetchCartItems = async (): Promise<Array<any>> => {
   try {
@@ -12,6 +17,7 @@ const fetchCartItems = async (): Promise<Array<any>> => {
     return []
   }
 }
+
 const fetchCartItemsBook = async (id: string): Promise<number> => {
   try {
     const response = await getCartItems()
@@ -20,6 +26,26 @@ const fetchCartItemsBook = async (id: string): Promise<number> => {
       if (cartItems[i].product_id._id == id) {
         console.log('Quantity to buy:', cartItems[i].quantityToBuy)
         return cartItems[i].quantityToBuy as number
+      }
+    }
+    return 0
+  } catch (error) {
+    return 0
+  }
+}
+
+const fetchCart = async (id: string): Promise<{ cartid: any; cartbookid: any } | number> => {
+  try {
+    const response = await getCartItems()
+    console.log('fetchcart')
+    const cartItems = response.data.result
+    for (let i = 0; i < cartItems.length; i++) {
+      if (cartItems[i].product_id._id == id) {
+        console.log(cartItems[i]._id)
+        return {
+          cartid: cartItems[i]._id,
+          cartbookid: cartItems[i].product_id._id
+        }
       }
     }
     return 0
@@ -49,9 +75,45 @@ export const useCartStore = defineStore('cart', {
   state: () => ({
     cart: '',
     cartitemscount: 0,
-    cartbookcount: 0
+    cartbookcount: 0,
+    cartobj: {
+      cartid: '',
+      cartbookid: ''
+    }
   }),
   actions: {
+    async addtocart() {
+      this.cartbookcount++
+      await addCartItems(this.cartobj.cartbookid)
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
+      this.setCartItemsCount()
+    },
+    async removefromcart() {
+      await removeCartItems(this.cartobj.cartid)
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
+      this.setCartItemsCount()
+    },
+    async updatecartitem() {
+      const updateobj = {
+        quantityToBuy: this.cartbookcount
+      }
+      await cartitemQuantity(this.cartobj.cartid, updateobj)
+    },
+    increment() {
+      this.cartbookcount++
+      this.updatecartitem()
+    },
+    decrement() {
+      this.cartbookcount--
+      if (this.cartbookcount > 0) {
+        this.updatecartitem()
+      } else {
+        this.removefromcart()
+        this.setCartItemsCount()
+      }
+    },
     async setCart(id: string) {
       this.cart = id
     },
@@ -60,9 +122,16 @@ export const useCartStore = defineStore('cart', {
       this.cartitemscount = cartItems.length
     },
     async setCartBookCount(id: string) {
-      console.log('firing')
+      this.cartobj.cartbookid = id
       const count = await fetchCartItemsBook(id)
       this.cartbookcount = count
+      if (count > 0) {
+        fetchCart(id).then((data) => {
+          console.log(data)
+          this.cartobj.cartid = data.cartid
+          this.cartobj.cartbookid = data.cartbookid
+        })
+      }
     }
   },
   getters: {
