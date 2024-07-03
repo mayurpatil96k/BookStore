@@ -1,13 +1,16 @@
 <script>
-import { computed, watch,ref } from 'vue';
+import { computed, watch, ref } from 'vue'
 import { getBooks } from '../../components/Services/Books'
 import router from '@/router'
 import { useCounterStore } from '@/stores/counter'
+import { useCartStore } from '@/stores/counter'
 export default {
   data() {
     return {
-      search:'',
+      useCounterStore,
+      search: '',
       book: [],
+      bookcopy:[],
       page: 1,
       itemsPerPage: 12,
       select: 'Sort by relevance',
@@ -20,59 +23,82 @@ export default {
       ]
     }
   },
-  updated(){
-console.log('updated')
+  created() {
+    this.cartStore = useCartStore();
+    this.counterStore = useCounterStore();
   },
-  
+  updated() {
+  this.counterStore.$subscribe((data) => {
+    if (data?.events?.target?.searchtext) {
+      const searchText = data.events.target.searchtext;
+      this.searchString = searchText;
+      if (searchText.length > 2) {
+        this.book = this.bookcopy.filter((item) => {
+          return item?.bookName.toLowerCase().includes(searchText) || item.author.toLowerCase().includes(searchText);
+        });
+      } else {
+        this.book = [...this.bookcopy];
+      }
+    }
+  });
+},
+
   computed: {
     totalVisible() {
-      return this.windowWidth <= 600 ? 3 : 9;
+      return this.windowWidth <= 600 ? 3 : 9
     },
     totalPages() {
-      return Math.ceil(this.book.length / this.itemsPerPage);
+      return Math.ceil(this.book.length / this.itemsPerPage)
     },
     sortedBooks() {
-      const start = (this.page - 1) * this.itemsPerPage;
-      const end = this.page * this.itemsPerPage;
-      return this.book.slice().sort((a, b) => {
-        switch (this.select) {
-          case 'Price:Low to High':
-            return a.discountPrice - b.discountPrice;
-          case 'Price:High to Low':
-            return b.discountPrice - a.discountPrice;
-          case 'Newest Arrival':
-            return new Date(b.arrivalDate) - new Date(a.arrivalDate);
-          default:
-            return 0;
-        }
-      }).slice(start, end);
+      const start = (this.page - 1) * this.itemsPerPage
+      const end = this.page * this.itemsPerPage
+      return this.book
+        .slice()
+        .sort((a, b) => {
+          switch (this.select) {
+            case 'Price:Low to High':
+              return a.discountPrice - b.discountPrice
+            case 'Price:High to Low':
+              return b.discountPrice - a.discountPrice
+            case 'Newest Arrival':
+              return new Date(b.arrivalDate) - new Date(a.arrivalDate)
+            default:
+              return 0
+          }
+        })
+        .slice(start, end)
     }
   },
-  created(){
-    this.counterStore = useCounterStore();
+  created() {
+    this.counterStore = useCounterStore()
+    this.cartStore = useCartStore();
   },
   mounted() {
     console.log(this.counterStore.searchtext)
-    window.addEventListener('resize', this.handleResize);
-    this.handleResize();
-    this.getBooks();
+    window.addEventListener('resize', this.handleResize)
+    this.handleResize()
+    this.getBooks()
   },
   beforeDestroy() {
-    window.removeEventListener('resize', this.handleResize);
+    window.removeEventListener('resize', this.handleResize)
   },
   methods: {
     handleResize() {
-      this.windowWidth = window.innerWidth;
+      this.windowWidth = window.innerWidth
     },
     getBooks() {
       getBooks()
         .then((data) => {
+          this.bookcopy = data.data.result;
           this.book = data.data.result;
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
     },
     bookdetailpage(id) {
-      router.push({ name: 'bookdetail', params: { id } });
+      console.log("fired")
+      this.cartStore.setCartBookCount(id)
+      router.push({ name: 'bookdetail', params: { id } })
     }
   }
 }
@@ -124,7 +150,9 @@ console.log('updated')
             </div>
           </div>
           <div class="d-flex flex-column pl-5">
-            <span class="pt-1 d-inline-block text-truncate"><strong>{{ item.bookName }}</strong></span>
+            <span class="pt-1 d-inline-block text-truncate"
+              ><strong>{{ item.bookName }}</strong></span
+            >
             <span class="u-smalltext">{{ 'by ' + item.author }}</span>
             <div class="d-flex align-center">
               <div class="u-rating d-flex justify-center align-center">
@@ -134,8 +162,12 @@ console.log('updated')
               <span class="u-smalltext pt-1 pl-1">(20)</span>
             </div>
             <div class="d-flex align-center">
-              <span><strong>{{ 'Rs.' + item.discountPrice }}</strong></span>
-              <span class="u-smalltext pl-1"><strike>{{ 'Rs.' + item.price }}</strike></span>
+              <span
+                ><strong>{{ 'Rs.' + item.discountPrice }}</strong></span
+              >
+              <span class="u-smalltext pl-1"
+                ><strike>{{ 'Rs.' + item.price }}</strike></span
+              >
             </div>
           </div>
         </div>

@@ -8,7 +8,7 @@ export const post = (url : string,data : Object,headerConfig : Object) => {
 export const get = (url : string , headerConfig : Object) => {
     return axios.get(BASE_URL + url, headerConfig);
 }
-export const gelete = (url : string, headerConfig : Object) => {
+export const axiosDelete = (url : string, headerConfig : Object) => {
     return axios.delete(BASE_URL + url, headerConfig);
 };
 

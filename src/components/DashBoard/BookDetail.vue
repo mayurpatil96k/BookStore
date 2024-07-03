@@ -1,6 +1,10 @@
 <script>
 import { getBooks, getFeedback, setFeedback } from '../../components/Services/Books'
+import Cart from '../DashBoard/Cart.vue'
 export default {
+  components:{
+    Cart,
+  },
   data: () => ({ desc: '', rating: '', book: null, feedback: null }),
   created() {
     this.getbooks()
@@ -21,7 +25,7 @@ export default {
     getFeedbacks() {
       getFeedback(this.$route.params.id)
         .then((data) => {
-          this.feedback = data.data.result
+          this.feedback = data.data.result.reverse();
           console.log(this.feedback)
         })
         .catch((err) => console.log(err))
@@ -72,7 +76,12 @@ export default {
           </div>
         </div>
         <div class="mt-5 d-flex justify-space-between align-center w-100">
-          <v-btn class="w-50" max-height="40" max-width="170" color="#A03037">Add to Bag</v-btn>
+          <div class="w-50" max-width="170" max-height="40">
+             <Cart/>
+            
+             <!-- <v-btn class="w-100" max-height="40" max-width="170" color="#A03037">Add to Bag</v-btn> -->
+           </div>
+
           <v-btn
             class="w-50"
             max-height="40"
@@ -175,6 +184,7 @@ export default {
 </template>
 
 <style>
+
 .u-sm-b {
   font-size: 0.8em;
   color: #373434;

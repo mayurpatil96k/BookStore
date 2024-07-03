@@ -2,6 +2,7 @@
 import { RouterView } from 'vue-router';
 import Books from '../components/DashBoard/Books.vue'
 import { useCounterStore } from '@/stores/counter'
+import { useCartStore } from '@/stores/counter'
 
 export default {
   components: {
@@ -15,10 +16,18 @@ export default {
         fullName: 'John Doe',
         email: 'john.doe@doe.com',
       },
+      cartcount: 0,
     }
   },
   updated(){
 console.log('updated')
+  },
+  mounted(){
+    this.cartStore = useCartStore();
+    this.cartStore.setCartItemsCount().then(() => {
+      this.cartcount = this.cartStore.cartitemscount;
+      console.log(this.cartcount);
+    });
   },
   created() {
     this.counterStore = useCounterStore();
@@ -82,8 +91,13 @@ console.log('updated')
     </v-card>
   </v-menu>
         
-        <div class="mr-10 u-i-margin border-s-sm border-e-sm h-100 d-flex flex-column justify-center align-center">
-          <v-icon class="pl-10 pr-10" icon="mdi-cart-outline"></v-icon>
+        <div class="mr-10 u-i-margin border-s-sm border-e-sm h-100 d-flex flex-column justify-center align-center ">
+          <div class="pl-7 pr-7">
+            
+          <v-badge size=small :content="cartcount" color="white" class="small-badge">
+          <v-icon  icon="mdi-cart-outline"></v-icon>
+        </v-badge>
+      </div>
           <span class="text-caption u-dnone">Cart</span>
         </div>
       </v-app-bar>
@@ -101,6 +115,7 @@ console.log('updated')
 
 
 <style>
+
 .w-25 {
     width: 35% !important;
 }
