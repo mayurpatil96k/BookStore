@@ -40,6 +40,11 @@ const router = createRouter({
           name: 'book',
           component: () => import('../components/DashBoard/Books.vue')
         },
+        {
+          path: '/dashboard/cartdetail',
+          name: 'cart',
+          component: () => import('../components/DashBoard/CartDetail.vue')
+        },
       ]
     }
     // {

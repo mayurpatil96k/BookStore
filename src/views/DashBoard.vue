@@ -3,6 +3,7 @@ import { RouterView } from 'vue-router';
 import Books from '../components/DashBoard/Books.vue'
 import { useCounterStore } from '@/stores/counter'
 import { useCartStore } from '@/stores/counter'
+import router from '@/router';
 
 export default {
   components: {
@@ -38,6 +39,9 @@ console.log('updated')
     this.searchtext = this.counterStore.searchtext;
   },
   methods: {
+    cartredirect(){
+      this.$router.push('cartdetail')
+    },
     changesearch() {
       this.counterStore.setSearchText(this.searchtext);
     },
@@ -95,7 +99,7 @@ console.log('updated')
     </v-card>
   </v-menu>
         
-        <div class="mr-10 u-i-margin border-s-sm border-e-sm h-100 d-flex flex-column justify-center align-center ">
+        <div @click="cartredirect" class="mr-10 u-i-margin border-s-sm border-e-sm h-100 d-flex flex-column justify-center align-center ">
           <div class="pl-7 pr-7">
             
           <v-badge size=small :content="cartcountfun" color="white" class="small-badge">

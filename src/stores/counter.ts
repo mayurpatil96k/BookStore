@@ -73,7 +73,7 @@ export const useCounterStore = defineStore('counter', {
 
 export const useCartStore = defineStore('cart', {
   state: () => ({
-    cart: '',
+    cart: [] as any,
     cartitemscount: 0,
     cartbookcount: 0,
     cartobj: {
@@ -95,15 +95,35 @@ export const useCartStore = defineStore('cart', {
         .catch((err) => console.log(err))
       this.setCartItemsCount()
     },
+    async removefromcartid(id:number) {
+      await removeCartItems(id as unknown as string)
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err))
+      this.setCartItemsCount()
+    },
     async updatecartitem() {
       const updateobj = {
         quantityToBuy: this.cartbookcount
       }
       await cartitemQuantity(this.cartobj.cartid, updateobj)
     },
+    async updatecartitemid(id:number,quantity:number) {
+      const updateobj = {
+        quantityToBuy: quantity
+      }
+      await cartitemQuantity(id as unknown as string, updateobj)
+    },
     increment() {
       this.cartbookcount++
       this.updatecartitem()
+    },
+    incrementid(id:number,qty:number){
+      this.updatecartitemid(id,qty);
+      this.setCart();
+    },
+    decrementid(id:number){
+      this.removefromcartid(id);
+      this.setCart();
     },
     decrement() {
       this.cartbookcount--
@@ -114,8 +134,9 @@ export const useCartStore = defineStore('cart', {
         this.setCartItemsCount()
       }
     },
-    async setCart(id: string) {
-      this.cart = id
+    async setCart() {
+      const cartItems = await fetchCartItems()
+      this.cart = cartItems
     },
     async setCartItemsCount() {
       const cartItems = await fetchCartItems()

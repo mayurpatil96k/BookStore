@@ -8,6 +8,9 @@ onMounted(() => {
   getCartItems().then((data)=>console.log()).catch((err)=>console.log(err))
 });
 
+defineProps({
+  title: String,
+})
 
 const addToCart = () => {
   CartStore.addtocart();
