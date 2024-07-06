@@ -49,7 +49,7 @@ const isPlaceOrderDisabled = computed(() => {
   return cartCount.value === 0
 })
 
-// Address details refs
+
 const fullName = ref('')
 const phone = ref('')
 const address = ref('')
@@ -57,7 +57,6 @@ const addressCity = ref('')
 const state = ref('')
 const addressType = ref('')
 
-// Function to set address details based on the selected address type
 const setAddressDetails = (selectedAddressType = addressType.value) => {
   if (cart.value.length > 0 && cart.value[0].user_id.address.length > 0) {
     const userAddresses = cart.value[0].user_id.address
@@ -71,7 +70,7 @@ const setAddressDetails = (selectedAddressType = addressType.value) => {
   }
 }
 
-// Watch for changes to addressType and update address details accordingly
+
 watch(addressType, (newAddressType) => {
   setAddressDetails(newAddressType)
 })

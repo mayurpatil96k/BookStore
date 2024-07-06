@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import router from '@/router'
+import { useCartStore } from '@/stores/counter'
+import { computed } from 'vue'
+const CartStore = useCartStore()
+const cart = computed(() => {
+  CartStore.cart
+})
 const redirect = () => {
   router.push('books')
 }
-const props = defineProps({
-  book: Object
-})
 </script>
 <template>
   <div class="w-100 d-flex align-center justify-center">
