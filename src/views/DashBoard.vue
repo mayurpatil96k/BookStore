@@ -1,9 +1,9 @@
 <script>
-import { RouterView } from 'vue-router';
+import { RouterView } from 'vue-router'
 import Books from '../components/DashBoard/Books.vue'
 import { useCounterStore } from '@/stores/counter'
 import { useCartStore } from '@/stores/counter'
-import router from '@/router';
+import router from '@/router'
 
 export default {
   components: {
@@ -15,47 +15,58 @@ export default {
       searchtext: '',
       user: {
         fullName: 'John Doe',
-        email: 'john.doe@doe.com',
+        email: 'john.doe@doe.com'
       },
-      cartcount: 0,
+      cartcount: 0
     }
   },
-  updated(){
-console.log('updated')
+  updated() {
+    console.log('updated')
   },
   computed: {
     cartcountfun() {
-    return this.cartStore.cartitemscount;
-  }
-},
-  mounted(){
-    this.cartStore = useCartStore();
+      return this.cartStore.cartitemscount
+    },
+
+  },
+  mounted() {
+    this.cartStore = useCartStore()
     this.cartStore.setCartItemsCount().then(() => {
-      this.cartcount = this.cartStore.cartitemscount;
-    });
+      this.cartcount = this.cartStore.cartitemscount
+    })
   },
   created() {
-    this.counterStore = useCounterStore();
-    this.searchtext = this.counterStore.searchtext;
+    this.counterStore = useCounterStore()
+    this.searchtext = this.counterStore.searchtext
   },
   methods: {
-    cartredirect(){
+    cartredirect() {
       this.$router.push('cartdetail')
     },
     changesearch() {
-      this.counterStore.setSearchText(this.searchtext);
+      this.counterStore.setSearchText(this.searchtext)
     },
-    logoutFun(){
-      localStorage.clear();
+    logoutFun() {
+      localStorage.clear()
+    },
+    redirecttologin(){
+      this.$router.push({path: '/'})
+    },
+    wishlist(){
+      this.$router.push('wishlist')
     }
   }
 }
 </script>
 <template>
-  <v-card class="u-lrmargin" style="z-index: 1;">
+  <v-card class="u-lrmargin" style="z-index: 1">
     <v-layout class="u-lrmargin">
       <v-app-bar color="#A03037">
-        <img class="u-margin pl-xs-5 pl-md-15 pl-sm-10" src="../assets/education.svg" alt="Bookstore Logo" />
+        <img
+          class="u-margin pl-xs-5 pl-md-15 pl-sm-10"
+          src="../assets/education.svg"
+          alt="Bookstore Logo"
+        />
         <v-toolbar-title class="u-dnone">Bookstore</v-toolbar-title>
         <div width="450px" class="u-dnone w-25">
           <v-text-field
@@ -73,39 +84,41 @@ console.log('updated')
         </div>
         <v-spacer></v-spacer>
         <v-menu min-width="200px" rounded>
-    <template v-slot:activator="{ props }">
-      <!-- profile div -->
-      <div v-bind="props" class="border-s-sm h-100 d-flex flex-column justify-center align-center">
-          
-          <v-icon  class="pl-10 pr-10" icon="mdi-account-outline"></v-icon>
-          <span class="text-caption u-dnone">Profile</span>
-      
-        </div>
-    </template>
-    <v-card>
-      <v-card-text>
-        <div class="mx-auto text-center">
-          <v-avatar color="brown">
-            <span class="text-h5"></span>
-          </v-avatar>
-          <h3>{{ user.fullName }}</h3>
-          <p class="text-caption mt-1">{{ user.email }}</p>
-          <v-divider class="my-3"></v-divider>
-          <v-btn variant="text" rounded> Edit Account </v-btn>
-          <v-divider class="my-3"></v-divider>
-          <v-btn variant="text" @click="logoutFun" rounded> Logout </v-btn>
-        </div>
-      </v-card-text>
-    </v-card>
-  </v-menu>
-        
-        <div @click="cartredirect" class="mr-10 u-i-margin border-s-sm border-e-sm h-100 d-flex flex-column justify-center align-center ">
+          <template v-slot:activator="{ props }">
+            <!-- profile div -->
+            <div
+              v-bind="props"
+              class="border-s-sm h-100 d-flex flex-column justify-center align-center"
+            >
+              <v-icon class="pl-10 pr-10" icon="mdi-account-outline"></v-icon>
+              <span class="text-caption u-dnone">Profile</span>
+            </div>
+          </template>
+          <v-card>
+            <v-card-text>
+              <div class="mx-auto">
+                <h3>Welcome</h3>
+                <p class="text-caption mt-1">To acsess account and manage orders</p>
+                <v-btn @click="redirecttologin" color="#A03037" variant="outlined"> login/signup </v-btn>
+                <v-divider class="my-3"></v-divider>
+                <div class="d-flex flex-column align-start">
+                  <v-btn prepend-icon="mdi-order-bool-descending-variant" class="text-none" variant="plain"> My Orders </v-btn>
+                  <v-btn @click="wishlist" prepend-icon="mdi-cards-heart-outline" class="text-none"  variant="plain"> Wishlist </v-btn>
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+
+        <div
+          @click="cartredirect"
+          class="mr-10 u-i-margin border-s-sm border-e-sm h-100 d-flex flex-column justify-center align-center"
+        >
           <div class="pl-7 pr-7">
-            
-          <v-badge size=small :content="cartcountfun" color="white" class="small-badge">
-          <v-icon  icon="mdi-cart-outline"></v-icon>
-        </v-badge>
-      </div>
+            <v-badge size="small" :content="cartcountfun" color="white" class="small-badge">
+              <v-icon icon="mdi-cart-outline"></v-icon>
+            </v-badge>
+          </div>
           <span class="text-caption u-dnone">Cart</span>
         </div>
       </v-app-bar>
@@ -113,19 +126,16 @@ console.log('updated')
   </v-card>
   <!-- router view -->
   <div class="mt-16 u-lrmargin">
-    <RouterView/>
+    <RouterView />
   </div>
   <footer class="d-flex align-center">
     <span class="u-f-text">Copyright © 2024, Bookstore Private Limited. All Rights Reserved</span>
   </footer>
 </template>
 
-
-
 <style>
-
 .w-25 {
-    width: 35% !important;
+  width: 35% !important;
 }
 .u-i-margin {
   margin-right: 237px !important;

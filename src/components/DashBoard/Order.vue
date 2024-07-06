@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import router from '@/router'
 import { useCartStore } from '@/stores/counter'
-import { computed } from 'vue'
-const CartStore = useCartStore()
-const cart = computed(() => {
-  CartStore.cart
-})
+import { computed, onMounted } from 'vue'
+
 const redirect = () => {
   router.push('books')
 }

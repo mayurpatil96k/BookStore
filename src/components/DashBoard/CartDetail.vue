@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useCartStore } from '@/stores/counter'
 import router from '@/router';
 
 const CartStore = useCartStore()
 const cart = computed(() => CartStore.cart)
 const cartCount = computed(() => CartStore.cartitemscount)
+
+onUnmounted(()=>{
+  console.log(CartStore.cart);
+})
 
 onMounted(() => {
   CartStore.setCart().then(() => {

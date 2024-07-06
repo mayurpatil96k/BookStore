@@ -45,6 +45,11 @@ const router = createRouter({
           component: () => import('../components/DashBoard/Order.vue')
         },
         {
+          path: '/dashboard/wishlist',
+          name: 'wishlist',
+          component: () => import('../components/DashBoard/WishList.vue')
+        },
+        {
           path: '/dashboard/books',
           name: 'book',
           component: () => import('../components/DashBoard/Books.vue')
