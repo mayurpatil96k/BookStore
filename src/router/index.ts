@@ -10,6 +10,10 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      redirect: '/login', // Redirect to dashboard books
+    },
+    {
+      path: '/',
       name: 'home',
       component: LoginAndSignup,
       children: [
@@ -33,7 +37,12 @@ const router = createRouter({
         {
           path: '/dashboard/bookdetail/:id',
           name: 'bookdetail',
-          component: BookDetail
+          component: () => import('../components/DashBoard/BookDetail.vue')
+        },
+        {
+          path: '/dashboard/order',
+          name: 'order',
+          component: () => import('../components/DashBoard/Order.vue')
         },
         {
           path: '/dashboard/books',
@@ -47,15 +56,9 @@ const router = createRouter({
         },
       ]
     }
-    // {
-    //   path: '/',
-    //   name: 'about',
-    //   // route level code-splitting
-    //   // this generates a separate chunk (About.[hash].js) for this route
-    //   // which is lazy-loaded when the route is visited.
-    //   component: () => import('../views/LoginAndSignup.vue')
-    // }
   ]
+  
 })
+
 
 export default router

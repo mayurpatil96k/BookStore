@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useCartStore } from '@/stores/counter'
+import router from '@/router';
 
 const CartStore = useCartStore()
 const cart = computed(() => CartStore.cart)
@@ -41,7 +42,9 @@ const toggleAddressDetails = () => {
 const toggleOrderSummary = () => {
   isOrderSummaryOpen.value = !isOrderSummaryOpen.value
 }
-
+const redirect = ()=>{
+  router.push('order')
+}
 const isPlaceOrderDisabled = computed(() => {
   return cartCount.value === 0
 })
@@ -203,7 +206,7 @@ watch(addressType, (newAddressType) => {
           </div>
           <div class="d-flex pt-5 pb-5">
             <v-spacer></v-spacer>
-            <v-btn color="#3371B5" variant="elevated" @click="toggleOrderSummary">Checkout</v-btn>
+            <v-btn color="#3371B5" variant="elevated" @click="redirect">Checkout</v-btn>
           </div>
         </div>
       </div>

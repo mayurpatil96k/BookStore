@@ -10,7 +10,8 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.d.ts",
-    "src/components/DashBoard/DashBoard.vue"
+    "src/components/DashBoard/DashBoard.vue",
+    "src/components/DashBoard/Order.vue" 
   ],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
