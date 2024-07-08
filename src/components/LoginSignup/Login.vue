@@ -5,7 +5,21 @@ export default {
   data: () => ({
     visible: false,
     email: '',
-    password: ''
+    password: '',
+    emailRules: [
+      (value) => {
+        if (!value) return 'Must be a valid email address.'
+
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        return emailPattern.test(value) || 'Must be a valid email address.'
+      }
+    ],
+    passRules: [
+      (value) => {
+        if (value.length >= 8) return true
+        return 'Enter valid Password'
+      }
+    ]
   }),
   methods: {
     loginbtn() {
@@ -31,6 +45,7 @@ export default {
       density="compact"
       placeholder="Email address"
       variant="outlined"
+      :rules="emailRules"
     ></v-text-field>
   </div>
 
@@ -41,6 +56,7 @@ export default {
       :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
       :type="visible ? 'text' : 'password'"
       density="compact"
+      :rules="passRules"
       placeholder="Enter your password"
       variant="outlined"
       @click:append-inner="visible = !visible"

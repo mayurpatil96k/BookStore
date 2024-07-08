@@ -83,7 +83,7 @@ watch(addressType, (newAddressType) => {
 <template>
   <v-breadcrumbs :items="['Home', 'My Cart']"></v-breadcrumbs>
   <div class="w-100 d-flex align-content-center justify-center justify-md-start">
-    <div class="w-75 border-sm">
+    <div class="w-md-75 w-100 border-sm">
       <div class="d-flex pl-8 pr-5 pt-5">
         <span><strong>My Cart ({{ cartCount }})</strong></span>
         <v-spacer></v-spacer>
@@ -134,7 +134,7 @@ watch(addressType, (newAddressType) => {
       </v-card-actions>
     </div>
   </div>
-  <div class="w-75 pt-5">
+  <div class="w-100 w-md-75 pt-5">
     <div class="border-sm p-3 justify-center" :style="{ height: isAddressDetailsOpen ? '60px' : '496px' }">
       <div class="d-flex mt-4 ml-4" v-if="isAddressDetailsOpen">
         <h3>Address Details</h3>
@@ -186,7 +186,7 @@ watch(addressType, (newAddressType) => {
       </div>
     </div>
   </div>
-  <div class="w-75 pt-5">
+  <div class="w-100 w-md-75 pt-5">
     <div class="border-sm p-3 justify-center" :style="{ height: isOrderSummaryOpen ? '' : '60px' }">
       <div class="d-flex mt-4 ml-4" v-if="!isOrderSummaryOpen">
         <h3>Order Summary</h3>

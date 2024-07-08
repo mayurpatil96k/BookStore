@@ -26,7 +26,7 @@ onMounted(() => {
   <v-breadcrumbs :items="['Home', 'My WishList']"></v-breadcrumbs>
   <div class="w-100 pb-5">
     <div class="border-sm d-flex align-center" style="height: 55px; background-color: #f5f5f5">
-      <h3 class="ml-5"><strong>My Wishlist (02)</strong></h3>
+      <h3 class="ml-5"><strong>My Wishlist (0)</strong></h3>
     </div>
     <div class="d-flex pl-8 pt-8 pb-8 border-sm w-100" v-for="item in Wishlistitems">
       <img height="85" width="65" src="../../assets/Image 11@2x.png" alt="" />
