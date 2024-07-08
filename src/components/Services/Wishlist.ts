@@ -9,12 +9,12 @@ export const addCartItems = (id:string) => {
   return post(`/bookstore_user/add_cart_item/${id}`, {}, { headers })
 }
 
-export const removeCartItems = (id: String) => {
+export const removeWishItems = (id: String) => {
   const key = localStorage.getItem('API_KEY')
   const headers = {
     "x-access-token": key
   }
-  return axiosDelete(`/bookstore_user/remove_cart_item/${id}`, { headers })
+  return axiosDelete(`/bookstore_user/remove_wishlist_item/${id}`, { headers })
 }
 export const getWishllistItems = () => {
   const key = localStorage.getItem('API_KEY')
