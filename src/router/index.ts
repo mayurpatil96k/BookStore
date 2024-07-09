@@ -10,7 +10,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/login', // Redirect to dashboard books
+      redirect: '/dashboard/books', 
     },
     {
       path: '/',
@@ -64,6 +64,7 @@ const router = createRouter({
   ]
   
 })
+
 
 
 export default router

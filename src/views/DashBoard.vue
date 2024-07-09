@@ -27,7 +27,12 @@ export default {
     cartcountfun() {
       return this.cartStore.cartitemscount
     },
-
+    validationForLogin(){
+      const key = localStorage.getItem("API_KEY");
+      console.log(key)
+      if(key)return true;
+      return false;
+    }
   },
   mounted() {
     this.cartStore = useCartStore()
@@ -49,10 +54,10 @@ export default {
     logoutFun() {
       localStorage.clear()
     },
-    redirecttologin(){
-      this.$router.push({path: '/'})
+    redirecttologin() {
+      this.$router.push({ path: '/' })
     },
-    wishlist(){
+    wishlist() {
       this.$router.push('wishlist')
     }
   }
@@ -86,6 +91,7 @@ export default {
         <v-menu min-width="200px" rounded>
           <template v-slot:activator="{ props }">
             <!-- profile div -->
+
             <div
               v-bind="props"
               class="border-s-sm h-100 d-flex flex-column justify-center align-center"
@@ -94,16 +100,67 @@ export default {
               <span class="text-caption u-dnone">Profile</span>
             </div>
           </template>
-          <v-card>
+          <v-card v-if="!validationForLogin">
             <v-card-text>
               <div class="mx-auto">
                 <h3>Welcome</h3>
                 <p class="text-caption mt-1">To acsess account and manage orders</p>
-                <v-btn @click="redirecttologin" color="#A03037" variant="outlined"> login/signup </v-btn>
+                <v-btn @click="redirecttologin" color="#A03037" variant="outlined">
+                  login/signup
+                </v-btn>
                 <v-divider class="my-3"></v-divider>
                 <div class="d-flex flex-column align-start">
-                  <v-btn prepend-icon="mdi-order-bool-descending-variant" class="text-none" variant="plain"> My Orders </v-btn>
-                  <v-btn @click="wishlist" prepend-icon="mdi-cards-heart-outline" class="text-none"  variant="plain"> Wishlist </v-btn>
+                  <v-btn
+                    prepend-icon="mdi-order-bool-descending-variant"
+                    class="text-none"
+                    variant="plain"
+                  >
+                    My Orders
+                  </v-btn>
+                  <v-btn
+                    @click="wishlist"
+                    prepend-icon="mdi-cards-heart-outline"
+                    class="text-none"
+                    variant="plain"
+                  >
+                    Wishlist
+                  </v-btn>
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
+
+          <!-- logout -->
+          <v-card v-else>
+            <v-card-text>
+              <div class="mx-auto">
+                <h3>Welcome Mayur,</h3>
+
+
+                <div class="d-flex flex-column align-start">
+                  <v-btn
+                    prepend-icon="mdi-account-outline"
+                    class="text-none"
+                    variant="plain"
+                  >
+                    Profile
+                  </v-btn>
+                  <v-btn
+                    prepend-icon="mdi-order-bool-descending-variant"
+                    class="text-none"
+                    variant="plain"
+                  >
+                    My Orders
+                  </v-btn>
+                  <v-btn
+                    @click="wishlist"
+                    prepend-icon="mdi-cards-heart-outline"
+                    class="text-none"
+                    variant="plain"
+                  >
+                    Wishlist
+                  </v-btn>
+                  <v-btn @click="logoutFun" color="#A03037" variant="outlined"> logout </v-btn>
                 </div>
               </div>
             </v-card-text>

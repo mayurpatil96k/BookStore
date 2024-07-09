@@ -1,6 +1,7 @@
 <script>
 import { getBooks, getFeedback, setFeedback } from '../../components/Services/Books'
 import Cart from '../DashBoard/Cart.vue'
+import { addWishlist } from '../Services/Wishlist';
 export default {
   components:{
     Cart,
@@ -29,6 +30,9 @@ export default {
           console.log(this.feedback)
         })
         .catch((err) => console.log(err))
+    },
+    wish(id){
+      addWishlist(id)
     },
     givefeedback() {
       if(this.desc == '' || this.rating == '' || this.desc.length < 2) return
@@ -83,6 +87,7 @@ export default {
            </div>
 
           <v-btn
+          @click="wish(item._id)"
             class="w-50"
             max-height="40"
             max-width="170"
