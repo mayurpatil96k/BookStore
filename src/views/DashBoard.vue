@@ -55,7 +55,7 @@ export default {
       localStorage.clear()
     },
     redirecttologin() {
-      this.$router.push({ path: '/' })
+      this.$router.push({ path: '/login' })
     },
     wishlist() {
       this.$router.push('wishlist')
