@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import { computed, watch, ref } from 'vue'
 import { getBooks } from '../../components/Services/Books'
 import router from '@/router'

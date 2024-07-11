@@ -1,11 +1,12 @@
-<script>
-import { RouterView } from 'vue-router'
-import Books from '../components/DashBoard/Books.vue'
-import { useCounterStore } from '@/stores/counter'
-import { useCartStore } from '@/stores/counter'
-import router from '@/router'
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { RouterView } from 'vue-router';
+import Books from '../components/DashBoard/Books.vue';
+import { useCounterStore } from '@/stores/counter';
+import { useCartStore } from '@/stores/counter';
+import router from '@/router';
 
-export default {
+export default defineComponent({
   components: {
     Books,
     RouterView
@@ -13,56 +14,49 @@ export default {
   data() {
     return {
       searchtext: '',
-      user: {
-        fullName: 'John Doe',
-        email: 'john.doe@doe.com'
-      },
       cartcount: 0
-    }
-  },
-  updated() {
-    console.log('updated')
+    };
   },
   computed: {
-    cartcountfun() {
-      return this.cartStore.cartitemscount
+    cartcountfun(): number {
+      return this.cartStore.cartitemscount;
     },
-    validationForLogin(){
-      const key = localStorage.getItem("API_KEY");
-      console.log(key)
-      if(key)return true;
-      return false;
+    validationForLogin(): boolean {
+      const key = localStorage.getItem('API_KEY');
+      console.log(key);
+      return !!key;
     }
   },
   mounted() {
-    this.cartStore = useCartStore()
+    this.cartStore = useCartStore();
     this.cartStore.setCartItemsCount().then(() => {
-      this.cartcount = this.cartStore.cartitemscount
-    })
+      this.cartcount = this.cartStore.cartitemscount;
+    });
   },
   created() {
-    this.counterStore = useCounterStore()
-    this.searchtext = this.counterStore.searchtext
+    this.counterStore = useCounterStore();
+    this.searchtext = this.counterStore.searchtext;
   },
   methods: {
     cartredirect() {
-      this.$router.push('cartdetail')
+      this.$router.push('cartdetail');
     },
     changesearch() {
-      this.counterStore.setSearchText(this.searchtext)
+      this.counterStore.setSearchText(this.searchtext);
     },
     logoutFun() {
-      localStorage.clear()
+      localStorage.clear();
     },
     redirecttologin() {
-      this.$router.push({ path: '/login' })
+      this.$router.push({ path: '/login' });
     },
     wishlist() {
-      this.$router.push('wishlist')
+      this.$router.push('wishlist');
     }
   }
-}
+});
 </script>
+
 <template>
   <v-card class="u-lrmargin" style="z-index: 1">
     <v-layout class="u-lrmargin">
@@ -104,7 +98,7 @@ export default {
             <v-card-text>
               <div class="mx-auto">
                 <h3>Welcome</h3>
-                <p class="text-caption mt-1">To acsess account and manage orders</p>
+                <p class="text-caption mt-1">To access account and manage orders</p>
                 <v-btn @click="redirecttologin" color="#A03037" variant="outlined">
                   login/signup
                 </v-btn>
@@ -135,8 +129,6 @@ export default {
             <v-card-text>
               <div class="mx-auto">
                 <h3>Welcome Mayur,</h3>
-
-
                 <div class="d-flex flex-column align-start">
                   <v-btn
                     prepend-icon="mdi-account-outline"
@@ -190,7 +182,7 @@ export default {
   </footer>
 </template>
 
-<style>
+<style scoped>
 .w-25 {
   width: 35% !important;
 }

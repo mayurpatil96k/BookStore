@@ -2,12 +2,22 @@
 import { onMounted, ref } from 'vue'
 import { getWishllistItems, removeWishItems } from '../Services/Wishlist'
 
-const Wishlistitems = ref([])
+interface WishlistItem {
+  product_id: {
+    bookName: string;
+    author: string;
+    discountPrice: number;
+    price: number;
+    _id: string;
+  };
+}
+
+const Wishlistitems = ref<WishlistItem[]>([])
 
 const wishcCall = async () => {
   try {
     const data = await getWishllistItems()
-    Wishlistitems.value = data.data.result.reverse().filter((item) => item.product_id != null)
+    Wishlistitems.value = data.data.result.reverse().filter((item: { product_id: null; }) => item.product_id != null)
   } catch (error) {
     console.error('Error fetching wishlist items:', error)
   }

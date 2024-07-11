@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import { getBooks, getFeedback, setFeedback } from '../../components/Services/Books'
 import Cart from '../DashBoard/Cart.vue'
 import { addWishlist } from '../Services/Wishlist';

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import router from '@/router';
 import { login } from '../Services/Login'
 export default {
