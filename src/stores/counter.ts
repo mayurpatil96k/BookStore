@@ -34,7 +34,7 @@ const fetchCartItemsBook = async (id: string): Promise<number> => {
   }
 }
 
-const fetchCart = async (id: string): Promise<{ cartid: any; cartbookid: any } | number> => {
+const fetchCart = async (id: string): Promise<{ cartid: string; cartbookid: string } | number> => {
   try {
     const response = await getCartItems()
     console.log('fetchcart')
@@ -71,14 +71,19 @@ export const useCounterStore = defineStore('counter', {
   }
 })
 
+interface CartObject {
+  cartid: string;
+  cartbookid: string;
+}
+
 export const useCartStore = defineStore('cart', {
   state: () => ({
     cart: [] as any,
     cartitemscount: 0,
     cartbookcount: 0,
     cartobj: {
-      cartid: '',
-      cartbookid: ''
+      cartid: '' as string,
+      cartbookid: '' as string
     }
   }),
   actions: {
@@ -149,8 +154,8 @@ export const useCartStore = defineStore('cart', {
       if (count > 0) {
         fetchCart(id).then((data) => {
           console.log(data)
-          this.cartobj.cartid = data.cartid
-          this.cartobj.cartbookid = data.cartbookid
+          this.cartobj.cartid = (data as CartObject).cartid 
+          this.cartobj.cartbookid = (data as CartObject).cartbookid
         })
       }
     }

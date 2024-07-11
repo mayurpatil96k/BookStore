@@ -1,31 +1,35 @@
-<script lang="ts">
-import router from '@/router';
-import { signin } from '../Services/Login'
-export default {
-  data: () => ({
-    visible: false,
-    fname: '',
-    email: '',
-    pass: '',
-    mobile: ''
-  }),
-  methods: {
-    signinbtn() {
-      console.log('clicked...')
-      const signupobj = {
-        fullName: this.fname,
-        email: this.email,
-        password: this.pass,
-        phone: this.mobile
-      }
-      signin(signupobj)
-        .then((data) => console.log(data))
-        .then(()=>router.push('/login'))
-        .catch((err) => {console.log(err);alert('please enter correct details')})
-    }
-  }
-}
+<script lang="ts" setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { signin } from '../Services/Login';
+
+const router = useRouter();
+const visible = ref(false);
+const fname = ref('');
+const email = ref('');
+const pass = ref('');
+const mobile = ref('');
+
+const signinbtn = () => {
+  console.log('clicked...');
+  const signupobj = {
+    fullName: fname.value,
+    email: email.value,
+    password: pass.value,
+    phone: mobile.value
+  };
+  signin(signupobj)
+    .then((data) => {
+      console.log(data);
+      router.push('/login');
+    })
+    .catch((err) => {
+      console.log(err);
+      alert('please enter correct details');
+    });
+};
 </script>
+
 <template>
   <div>
     <div class="u-title">Full Name</div>
@@ -40,7 +44,7 @@ export default {
   <div class="u-passdiv">
     <div class="u-title-pass">Email</div>
     <v-text-field
-    type="email"
+      type="email"
       v-model="email"
       density="compact"
       placeholder="Enter your Email"
@@ -62,7 +66,7 @@ export default {
   <div class="u-passdiv">
     <div class="u-title-pass">Mobile Number</div>
     <v-text-field
-    type="number"
+      type="number"
       v-model="mobile"
       density="compact"
       placeholder="Enter your Mobile"

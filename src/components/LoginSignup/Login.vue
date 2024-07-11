@@ -1,41 +1,43 @@
-<script lang="ts">
-import router from '@/router';
-import { login } from '../Services/Login'
-export default {
-  data: () => ({
-    visible: false,
-    email: '',
-    password: '',
-    emailRules: [
-      (value) => {
-        if (!value) return 'Must be a valid email address.'
+<script lang="ts" setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { login } from '../Services/Login';
 
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-        return emailPattern.test(value) || 'Must be a valid email address.'
-      }
-    ],
-    passRules: [
-      (value) => {
-        if (value.length >= 8) return true
-        return 'Enter valid Password'
-      }
-    ]
-  }),
-  methods: {
-    loginbtn() {
-      let loginobj = {
-        email: this.email,
-        password: this.password
-      }
-      console.log(loginobj)
-      login(loginobj)
-        .then((data) => localStorage.setItem("API_KEY",data.data.result.accessToken))
-        .then(()=>router.push('/dashboard/books'))
-        .catch((err) => console.log(err))
-    }
+const router = useRouter();
+const visible = ref(false);
+const email = ref('');
+const password = ref('');
+
+const emailRules = [
+  (value: string) => {
+    if (!value) return 'Must be a valid email address.';
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailPattern.test(value) || 'Must be a valid email address.';
   }
-}
+];
+
+const passRules = [
+  (value: string) => {
+    if (value.length >= 8) return true;
+    return 'Enter valid Password';
+  }
+];
+
+const loginbtn = () => {
+  const loginobj = {
+    email: email.value,
+    password: password.value
+  };
+  console.log(loginobj);
+  login(loginobj)
+    .then((data) => {
+      localStorage.setItem("API_KEY", data.data.result.accessToken);
+      router.push('/dashboard/books');
+    })
+    .catch((err) => console.log(err));
+};
 </script>
+
 <template>
   <div>
     <div class="u-title">Email Id</div>

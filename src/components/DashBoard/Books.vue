@@ -1,107 +1,113 @@
-<script lang="ts">
-import { computed, watch, ref } from 'vue'
-import { getBooks } from '../../components/Services/Books'
-import router from '@/router'
-import { useCounterStore } from '@/stores/counter'
-import { useCartStore } from '@/stores/counter'
-export default {
-  data() {
-    return {
-      useCounterStore,
-      search: '',
-      book: [],
-      bookcopy:[],
-      page: 1,
-      itemsPerPage: 12,
-      select: 'Sort by relevance',
-      windowWidth: window.innerWidth,
-      items: [
-        { state: 'Sort by relevance' },
-        { state: 'Price:Low to High' },
-        { state: 'Price:High to Low' },
-        { state: 'Newest Arrival' }
-      ]
-    }
-  },
-  created() {
-    this.cartStore = useCartStore();
-    this.counterStore = useCounterStore();
-  },
-  updated() {
-  this.counterStore.$subscribe((data) => {
-    if (data?.events?.target?.searchtext) {
-      const searchText = data.events.target.searchtext;
-      this.searchString = searchText;
-      if (searchText.length > 2) {
-        this.book = this.bookcopy.filter((item) => {
-          return item?.bookName.toLowerCase().includes(searchText) || item.author.toLowerCase().includes(searchText);
-        });
-      } else {
-        this.book = [...this.bookcopy];
-      }
-    }
-  });
-},
+<script setup lang="ts">
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
+import { getBooks } from '../../components/Services/Books';
+import router from '@/router';
+import { useCounterStore } from '@/stores/counter';
+import { useCartStore } from '@/stores/counter';
 
-  computed: {
-    totalVisible() {
-      return this.windowWidth <= 600 ? 3 : 9
-    },
-    totalPages() {
-      return Math.ceil(this.book.length / this.itemsPerPage)
-    },
-    sortedBooks() {
-      const start = (this.page - 1) * this.itemsPerPage
-      const end = this.page * this.itemsPerPage
-      return this.book
-        .slice()
-        .sort((a, b) => {
-          switch (this.select) {
-            case 'Price:Low to High':
-              return a.discountPrice - b.discountPrice
-            case 'Price:High to Low':
-              return b.discountPrice - a.discountPrice
-            case 'Newest Arrival':
-              return new Date(b.arrivalDate) - new Date(a.arrivalDate)
-            default:
-              return 0
-          }
-        })
-        .slice(start, end)
-    }
-  },
-  created() {
-    this.counterStore = useCounterStore()
-    this.cartStore = useCartStore();
-  },
-  mounted() {
-    console.log(this.counterStore.searchtext)
-    window.addEventListener('resize', this.handleResize)
-    this.handleResize()
-    this.getBooks()
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.handleResize)
-  },
-  methods: {
-    handleResize() {
-      this.windowWidth = window.innerWidth
-    },
-    getBooks() {
-      getBooks()
-        .then((data) => {
-          this.bookcopy = data.data.result;
-          this.book = data.data.result;
-        })
-        .catch((err) => console.log(err))
-    },
-    bookdetailpage(id) {
-      console.log("fired")
-      this.cartStore.setCartBookCount(id)
-      router.push({ name: 'bookdetail', params: { id } })
+interface Book {
+  description: string;
+  discountPrice: number;
+  bookImage: string | null;
+  _id: string;
+  admin_user_id: string;
+  bookName: string;
+  author: string;
+  quantity: number;
+  price: number;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+const counterStore = useCounterStore();
+const cartStore = useCartStore();
+
+const search = ref<string>('');
+const book = ref<Book[]>([]);
+const bookcopy = ref<Book[]>([]);
+const page = ref<number>(1);
+const itemsPerPage = ref<number>(12);
+const select = ref<string>('Sort by relevance');
+const windowWidth = ref<number>(window.innerWidth);
+const items = ref([
+  { state: 'Sort by relevance' },
+  { state: 'Price: Low to High' },
+  { state: 'Price: High to Low' },
+  { state: 'Newest Arrival' }
+]);
+
+const totalVisible = computed(() => {
+  return windowWidth.value <= 600 ? 3 : 9;
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(book.value.length / itemsPerPage.value);
+});
+
+const sortedBooks = computed(() => {
+  const start = (page.value - 1) * itemsPerPage.value;
+  const end = page.value * itemsPerPage.value;
+  return book.value
+    .slice()
+    .sort((a, b) => {
+      switch (select.value) {
+        case 'Price: Low to High':
+          return a.discountPrice - b.discountPrice;
+        case 'Price: High to Low':
+          return b.discountPrice - a.discountPrice;
+        case 'Newest Arrival':
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        default:
+          return 0;
+      }
+    })
+    .slice(start, end);
+});
+
+const handleResize = () => {
+  windowWidth.value = window.innerWidth;
+};
+
+const fetchBooks = () => {
+  getBooks()
+    .then((data) => {
+      bookcopy.value = data.data.result;
+      book.value = data.data.result;
+    })
+    .catch((err) => console.log(err));
+};
+
+const bookdetailpage = (id: string) => {
+  console.log('fired');
+  cartStore.setCartBookCount(id);
+  router.push({ name: 'bookdetail', params: { id } });
+};
+
+watch(
+  () => counterStore.searchtext,
+  (newVal) => {
+    if (newVal.length > 2) {
+      book.value = bookcopy.value.filter((item) => {
+        return item.bookName.toLowerCase().includes(newVal.toLowerCase()) ||
+          item.author.toLowerCase().includes(newVal.toLowerCase());
+      });
+    } else {
+      book.value = [...bookcopy.value];
     }
   }
-}
+);
+
+onMounted(() => {
+  console.log(counterStore.searchtext);
+  window.addEventListener('resize', handleResize);
+  handleResize();
+  fetchBooks();
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <template>
@@ -143,7 +149,7 @@ export default {
           <div class="d-flex align-center justify-center u-c-img position-relative">
             <img height="135" width="110" src="../../assets/Image 11@2x.png" alt="" />
             <div
-              v-if="item.quantity == 0"
+              v-if="item.quantity === 0"
               class="u-box-out position-absolute d-flex align-center justify-center"
             >
               <span><strong>OUT OF STOCK</strong></span>
@@ -179,7 +185,7 @@ export default {
   </div>
 </template>
 
-<style>
+<style scoped>
 .book-card:hover {
   box-shadow: 0px 0px 2px 2px #bfb5b5;
 }

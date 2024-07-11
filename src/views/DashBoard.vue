@@ -1,59 +1,49 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { RouterView } from 'vue-router';
+<script lang="ts" setup>
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import Books from '../components/DashBoard/Books.vue';
 import { useCounterStore } from '@/stores/counter';
 import { useCartStore } from '@/stores/counter';
-import router from '@/router';
 
-export default defineComponent({
-  components: {
-    Books,
-    RouterView
-  },
-  data() {
-    return {
-      searchtext: '',
-      cartcount: 0
-    };
-  },
-  computed: {
-    cartcountfun(): number {
-      return this.cartStore.cartitemscount;
-    },
-    validationForLogin(): boolean {
-      const key = localStorage.getItem('API_KEY');
-      console.log(key);
-      return !!key;
-    }
-  },
-  mounted() {
-    this.cartStore = useCartStore();
-    this.cartStore.setCartItemsCount().then(() => {
-      this.cartcount = this.cartStore.cartitemscount;
-    });
-  },
-  created() {
-    this.counterStore = useCounterStore();
-    this.searchtext = this.counterStore.searchtext;
-  },
-  methods: {
-    cartredirect() {
-      this.$router.push('cartdetail');
-    },
-    changesearch() {
-      this.counterStore.setSearchText(this.searchtext);
-    },
-    logoutFun() {
-      localStorage.clear();
-    },
-    redirecttologin() {
-      this.$router.push({ path: '/login' });
-    },
-    wishlist() {
-      this.$router.push('wishlist');
-    }
-  }
+const router = useRouter();
+const searchtext = ref('');
+const cartcount = ref(0);
+const cartStore = useCartStore();
+const counterStore = useCounterStore();
+
+const cartcountfun = computed(() => cartStore.cartitemscount);
+
+const validationForLogin = computed(() => {
+  const key = localStorage.getItem('API_KEY');
+  console.log(key);
+  return key !== null;
+});
+
+const cartredirect = () => {
+  router.push('cartdetail');
+};
+
+const changesearch = () => {
+  counterStore.setSearchText(searchtext.value);
+};
+
+const logoutFun = () => {
+  localStorage.clear();
+};
+
+const redirecttologin = () => {
+  router.push({ path: '/login' });
+};
+
+const wishlist = () => {
+  router.push('wishlist');
+};
+
+onMounted(() => {
+  cartStore.setCartItemsCount().then(() => {
+    cartcount.value = cartStore.cartitemscount;
+  });
+  searchtext.value = counterStore.searchtext;
 });
 </script>
 
@@ -85,7 +75,6 @@ export default defineComponent({
         <v-menu min-width="200px" rounded>
           <template v-slot:activator="{ props }">
             <!-- profile div -->
-
             <div
               v-bind="props"
               class="border-s-sm h-100 d-flex flex-column justify-center align-center"
@@ -100,7 +89,7 @@ export default defineComponent({
                 <h3>Welcome</h3>
                 <p class="text-caption mt-1">To access account and manage orders</p>
                 <v-btn @click="redirecttologin" color="#A03037" variant="outlined">
-                  login/signup
+                  Login/Signup
                 </v-btn>
                 <v-divider class="my-3"></v-divider>
                 <div class="d-flex flex-column align-start">
@@ -123,7 +112,6 @@ export default defineComponent({
               </div>
             </v-card-text>
           </v-card>
-
           <!-- logout -->
           <v-card v-else>
             <v-card-text>
@@ -152,13 +140,12 @@ export default defineComponent({
                   >
                     Wishlist
                   </v-btn>
-                  <v-btn @click="logoutFun" color="#A03037" variant="outlined"> logout </v-btn>
+                  <v-btn @click="logoutFun" color="#A03037" variant="outlined"> Logout </v-btn>
                 </div>
               </div>
             </v-card-text>
           </v-card>
         </v-menu>
-
         <div
           @click="cartredirect"
           class="mr-10 u-i-margin border-s-sm border-e-sm h-100 d-flex flex-column justify-center align-center"
@@ -182,7 +169,7 @@ export default defineComponent({
   </footer>
 </template>
 
-<style scoped>
+<style>
 .w-25 {
   width: 35% !important;
 }
