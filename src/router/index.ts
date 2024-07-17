@@ -65,6 +65,13 @@ const router = createRouter({
   
 })
 
+router.beforeEach(async (to, from) => {
+  const isAuthenticated = localStorage.getItem('API_KEY')
+  if (!isAuthenticated && to.name !== 'login' && to.name !== 'signup' && to.name !== 'book' && to.name !== '') {
+    console.log(to.path)
+    return { name: 'login' }
+  }
+})
 
 
 export default router

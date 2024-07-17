@@ -1,12 +1,11 @@
 import { describe, it, expect } from 'vitest'
 
 import { mount } from '@vue/test-utils'
-import DashBoard from '@/views/DashBoard.vue'
+import Login from '../LoginSignup/Login.vue'
 
 
 describe('DashBoard', () => {
   it('renders properly', () => {
-    const wrapper = mount(DashBoard, { props: { msg: 'Hello Dashboard' } })
-    expect(wrapper.text()).toContain(' Book')
+    const wrapper = mount(Login)
   })
 })

@@ -20,6 +20,8 @@ interface Book {
   __v: number;
 }
 
+const loading = ref(false);
+
 const counterStore = useCounterStore();
 const cartStore = useCartStore();
 
@@ -70,10 +72,12 @@ const handleResize = () => {
 };
 
 const fetchBooks = () => {
+  loading.value = true;
   getBooks()
     .then((data) => {
       bookcopy.value = data.data.result;
       book.value = data.data.result;
+      loading.value = false;
     })
     .catch((err) => console.log(err));
 };
@@ -111,10 +115,18 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="pl-md-2 pr-md-2 d-flex align-center">
+  <div class="d-flex align-center justify-center" v-if="loading">
+    <v-progress-circular 
+      indeterminate
+      color="primary"
+    ></v-progress-circular>
+  </div>
+   
+
+  <div v-else class="pl-md-2 pr-md-2 d-flex align-center">
     <div class="d-flex align-center">
       <span class="pl-md-2 pr-md-2 text-h5">Books &nbsp</span>
-      <span class="text-caption u-dnone">(128 Items)</span>
+      <span class="text-caption u-dnone">({{sortedBooks.length}} Items)</span>
     </div>
     <v-spacer></v-spacer>
     <div class="pl-md-2 pr-md-2 d-flex align-center">
